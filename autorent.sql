@@ -105,3 +105,62 @@ SELECT COUNT(regNumber) as  count , SUM(hindKokku) AS summaarneMaksmus FROM rend
 
 SELECT TOP 1 auto.autoID, auto.varv FROM rendiLeping INNER JOIN auto ON rendiLeping.regNumber = auto.regNumber ORDER BY rendiLeping.hindKokku DESC ;
 
+GRANT SELECT, INSERT ON rendiLeping to tootaja;
+ 
+
+ /* tootaja */
+
+UPDATE rendiLeping SET hindKokku = 2 WHERE lepingID = 1;
+ /* Msg 229, Level 14, State 5, Line 1
+The UPDATE permission was denied on the object 'rendiLeping', database 'Autorent', schema 'dbo'.*/ 
+
+SELECT * FROM rendiLeping;
+/* Commands completed successfully. */
+
+SELECT * FROM auto;
+/* The SELECT permission was denied on the object 'auto', database 'Autorent', schema 'dbo'. */
+
+INSERT INTO rendiLeping(rendiAlgus, rendiLopp, klientID, regNumber, rendiKestvus, hindKokku, tootajaID) VALUES ('2024-07-25', '2024-06-29', 1, 'ABC001', 42, 163.3, 1);
+/* (1 row affected)  */ 
+
+
+/* Protseduurid */
+CREATE PROCEDURE rendiLepingLisamine
+@v_rendiAlgus DATE,
+@v_rendiLopp DATE,
+@v_klientID int,
+@v_regNumber varchar(6),
+@v_rendiKestvus int,
+@v_hindKokku decimal,
+@v_tootajaID int
+AS
+BEGIN
+INSERT INTO rendiLeping(rendiAlgus, rendiLopp, klientID, regNumber, rendiKestvus, hindKokku, tootajaID) VALUES (@v_rendiAlgus, @v_rendiLopp, @v_klientID, @v_regNumber, @v_rendiKestvus, @v_hindKokku, @v_tootajaID);
+END
+GO
+
+EXEC rendiLepingLisamine @v_rendiAlgus = '2024-07-25', @v_rendiLopp = '2024-06-29', @v_klientID = 1, @v_regNumber = 'ABC001', @v_rendiKestvus = 42, @v_hindKokku = 163.3, @v_tootajaID = 1;
+
+CREATE PROCEDURE rendiLaping
+@id int
+AS
+BEGIN
+DELETE FROM rendiLeping WHERE lepingID = @id;
+END
+GO
+
+EXEC rendiLaping @id = 5;
+
+CREATE PROCEDURE klientiUuendamine
+@id int,
+@v_kliendiNimi varchar(60),
+@v_telefon varchar(8),
+@v_aadress varchar(60),
+@v_soiduKogemus varchar(70)
+AS
+BEGIN
+UPDATE klient SET kliendiNimi = @v_kliendiNimi, telefon = @v_telefon, aadress = @v_aadress, soiduKogemus = @v_soiduKogemus WHERE klientID = @id;
+END
+GO
+
+EXEC klientiUuendamine @id = 3, @v_kliendiNimi = 'Markus', @v_telefon = '53551699', @v_aadress = 'kogemus 42', @v_soiduKogemus = 'halb';
