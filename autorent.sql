@@ -101,7 +101,7 @@ INSERT INTO auto(regNumber, markID, varv, v_aasta, kaigukastID, km) VALUES ('ABC
 
 INSERT INTO rendiLeping(rendiAlgus, rendiLopp, klientID, regNumber, rendiKestvus, hindKokku, tootajaID) VALUES ('2024-06-25', '2024-06-29', 1, 'ABC001', 42, 163.3, 1), ('2024-06-20', '2024-06-26', 2, 'BCV776', 52, 421.54, 2), ('2024-06-16', '2024-06-29', 3, 'SSV414', 12, 641.52, 3); 
 
-/* Kontrollime */
+/* Tehtud ülesanned */
 
 select * from auto
 INNER JOIN kaigukast ON kaigukast.kaigukastID=auto.kaigukastID;
