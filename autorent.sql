@@ -1,3 +1,5 @@
+/* Loome andmebaas */ 
+
 CREATE DATABASE autorentAleksander;
 use autorentAleksander;
 
@@ -70,6 +72,8 @@ CREATE TABLE rendiLeping(
     tootajaID int
 )
 
+/* Lisame foreign key */ 
+
 ALTER TABLE rendiLeping
 ADD FOREIGN KEY (klientID) REFERENCES klient(klientID);
 ALTER TABLE rendiLeping
@@ -78,12 +82,16 @@ ALTER TABLE rendiLeping
 ADD FOREIGN KEY (tootajaID) REFERENCES tootaja(tootajaID);
 
 
+/* Siin ma loon oma tabel, kus autod remondis */
+
 CREATE TABLE autodRemondis (
     autoRemondisID int not null PRIMARY KEY identity(1,1),
     autoID int,
     aadress varchar(60),
     tootajaID int
 )
+
+/* Lisame andmed */ 
 
 INSERT INTO klient(kliendiNimi, telefon, aadress, soiduKogemus) VALUES ('Alexander Vill', '56552677', 'estonia 44', 'halb'), ('Margarita Helli', '57236622', 'endla 64', 'hasti'), ('Oleg Nechiporenko', '52774122', 'tulemus 24', 'hasti');
 
@@ -92,6 +100,8 @@ INSERT INTO tootaja(tootajaNimi, ametiID) VALUES ('Mark Piller', 1), ('Jane Doe'
 INSERT INTO auto(regNumber, markID, varv, v_aasta, kaigukastID, km) VALUES ('ABC001', 1, 'must', 2019, 1, 1005.53) , ('BCV776', 2, 'roheline', 2023, 2, 105.3) , ('SSV414', 3, 'must', 2008, 1, 6532.52);
 
 INSERT INTO rendiLeping(rendiAlgus, rendiLopp, klientID, regNumber, rendiKestvus, hindKokku, tootajaID) VALUES ('2024-06-25', '2024-06-29', 1, 'ABC001', 42, 163.3, 1), ('2024-06-20', '2024-06-26', 2, 'BCV776', 52, 421.54, 2), ('2024-06-16', '2024-06-29', 3, 'SSV414', 12, 641.52, 3); 
+
+/* Kontrollime */
 
 select * from auto
 INNER JOIN kaigukast ON kaigukast.kaigukastID=auto.kaigukastID;
@@ -104,6 +114,8 @@ SELECT * FROM rendiLeping WHERE tootajaID = 1
 SELECT COUNT(regNumber) as  count , SUM(hindKokku) AS summaarneMaksmus FROM rendiLeping;
 
 SELECT TOP 1 auto.autoID, auto.varv FROM rendiLeping INNER JOIN auto ON rendiLeping.regNumber = auto.regNumber ORDER BY rendiLeping.hindKokku DESC ;
+
+/* Anname tootajale õigused  */
 
 GRANT SELECT, INSERT ON rendiLeping to tootaja;
  
@@ -125,6 +137,9 @@ INSERT INTO rendiLeping(rendiAlgus, rendiLopp, klientID, regNumber, rendiKestvus
 
 
 /* Protseduurid */
+
+/* protseduur, kus me saame lisada andmed rendLeping tabelisse*/
+
 CREATE PROCEDURE rendiLepingLisamine
 @v_rendiAlgus DATE,
 @v_rendiLopp DATE,
@@ -141,6 +156,8 @@ GO
 
 EXEC rendiLepingLisamine @v_rendiAlgus = '2024-07-25', @v_rendiLopp = '2024-06-29', @v_klientID = 1, @v_regNumber = 'ABC001', @v_rendiKestvus = 42, @v_hindKokku = 163.3, @v_tootajaID = 1;
 
+/* protseduur, kus me saame kustuta andmed rendiLaping tabelis */
+
 CREATE PROCEDURE rendiLaping
 @id int
 AS
@@ -150,6 +167,8 @@ END
 GO
 
 EXEC rendiLaping @id = 5;
+
+/* protseduur , kus me saame uuendata andmed kliendi tabelis */ 
 
 CREATE PROCEDURE klientiUuendamine
 @id int,
